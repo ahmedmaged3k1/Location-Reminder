@@ -8,7 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".authentication.AuthenticationActivity">
+        tools:context=".ui.features.login.LoginFragment">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -126,11 +126,91 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="78dp"
+            android:layout_height="27dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="Password"
+            android:textColor="@color/black"
+            android:textFontWeight="800"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/loginPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.041"
+            app:layout_constraintStart_toStartOf="@+id/guideline3">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="68dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="21dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="Email"
+            android:textColor="@color/black"
+            android:textFontWeight="800"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/loginEmail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="@+id/guideline2"
+            app:layout_constraintVertical_bias="0.0">
+
+        </TextView>
+
+
+        <EditText
+            android:id="@+id/loginEmail"
+            android:layout_width="357dp"
+
+            android:layout_height="66dp"
+            android:layout_marginStart="20dp"
+
+            android:layout_marginBottom="8dp"
+            android:autofillHints=""
+            android:drawableStart="@drawable/ic_baseline_email_24"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:paddingStart="20dp"
+            android:textColorHint="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/textView4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            tools:ignore="RtlSymmetry" />
+
+        <EditText
+            android:id="@+id/loginPassword"
+
+            android:layout_width="357dp"
+            android:layout_height="66dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:autofillHints=""
+            android:drawableStart="@drawable/ic_baseline_lock_24"
+
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:paddingStart="20dp"
+            android:textColorHint="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/getStartedButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            tools:ignore="RtlSymmetry" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/getStartedButton"
             android:layout_width="220dp"
             android:layout_height="85dp"
-            android:layout_marginBottom="200dp"
+            android:layout_marginBottom="88dp"
             android:background="@drawable/round_corners_colured"
             android:text="Login"
 
@@ -139,10 +219,48 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintHorizontal_bias="0.587"
             app:layout_constraintStart_toStartOf="parent">
 
         </androidx.appcompat.widget.AppCompatButton>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="157dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginBottom="32dp"
+
+            android:gravity="center"
+            android:text="Don't Have An Account "
+            android:textColor="@color/black"
+            android:textFontWeight="800"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline3">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/register"
+            android:layout_width="157dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="32dp"
+            android:clickable="true"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="Register Now"
+            android:textColor="@color/blue_background"
+            android:textFontWeight="800"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textView6">
+
+        </TextView>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"
