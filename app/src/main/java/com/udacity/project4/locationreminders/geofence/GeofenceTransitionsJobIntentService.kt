@@ -4,16 +4,19 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import com.google.android.gms.location.Geofence
+import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
-import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
+
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.sendNotification
 import kotlinx.coroutines.*
-import org.koin.android.ext.android.inject
+import org.koin.core.KoinComponent
+import org.koin.core.inject
+
 import kotlin.coroutines.CoroutineContext
 
-class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
+class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope  , KoinComponent {
 
     private var coroutineJob: Job = Job()
     override val coroutineContext: CoroutineContext

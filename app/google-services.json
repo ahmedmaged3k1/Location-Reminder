@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "447607973034",
+    "project_id": "locationreminder-c767f",
+    "storage_bucket": "locationreminder-c767f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447607973034:android:b612dd20e75f341b889cd3",
+        "android_client_info": {
+          "package_name": "com.udacity.project4"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "447607973034-kj6itednoda42a0ut2a63rkklfj5bo5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.udacity.project4",
+            "certificate_hash": "d9b8c30d5b32d8a3f2d0571571214ca9b2849d6b"
+          }
+        },
+        {
+          "client_id": "447607973034-lkjbss15arcnou7n5c9bmsonhrour4l9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZTjBwDRhaTyFk9RRr4y2J1XA9Gvgz0tc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "447607973034-lkjbss15arcnou7n5c9bmsonhrour4l9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
