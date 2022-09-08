@@ -41,10 +41,7 @@ class AuthenticationActivity : AppCompatActivity() {
 
     }
 
-    override fun onStart() {
-        super.onStart()
-       // observeAuthenticationState()
-    }
+
 
     private fun launchSignInFlow() {
 
@@ -65,8 +62,6 @@ class AuthenticationActivity : AppCompatActivity() {
         if (requestCode == 1001) {
             val response = IdpResponse.fromResultIntent(data)
             if (resultCode == Activity.RESULT_OK) {
-
-                // User successfully signed in
                 val intent = Intent(this, RemindersActivity::class.java)
                 startActivity(intent)
                 Log.d(
@@ -74,9 +69,7 @@ class AuthenticationActivity : AppCompatActivity() {
                     "Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!"
                 )
             } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
+
                 Log.d(TAG, "Sign in unsuccessful ${response?.error?.errorCode}")
             }
         }
