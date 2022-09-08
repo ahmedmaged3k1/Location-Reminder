@@ -43,7 +43,7 @@ class AuthenticationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        observeAuthenticationState()
+       // observeAuthenticationState()
     }
 
     private fun launchSignInFlow() {
@@ -82,7 +82,7 @@ class AuthenticationActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeAuthenticationState() {
+  /*  private fun observeAuthenticationState() {
 
 
         viewModel.authenticationState.observe(this, Observer { authenticationState ->
@@ -113,5 +113,5 @@ class AuthenticationActivity : AppCompatActivity() {
                 }
             }
         })
-    }
+    }*/
 }
