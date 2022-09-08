@@ -56,43 +56,39 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
         }
 
-        if (ContextCompat.checkSelfPermission(
-                this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this.requireActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            ) {
-                ActivityCompat.requestPermissions(
-                    this.requireActivity(),
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
-                );
-            } else {
-                ActivityCompat.requestPermissions(
-                    this.requireActivity(),
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1
-                );
+            val permissionLauncher = registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted ->
+                if (isGranted) {
+                    // Do if the permission is granted
+                    Toast.makeText(
+                        this.requireContext(),
+                        "Permission Granted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else {
+                    // Do otherwise
+                    Toast.makeText(
+                        this.requireContext(),
+                        "Permission Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    view?.findNavController()
+                        ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
+                }
             }
-        }
-        val permissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted ->
-            if (isGranted) {
-                // Do if the permission is granted
-                Toast.makeText(
-                    this.requireContext(),
-                    "Permission Granted",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else {
-                // Do otherwise
-                Toast.makeText(this.requireContext(), "Permission Denied", Toast.LENGTH_SHORT)
-                    .show()
-                view?.findNavController()
-                    ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
-            }
+
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
 
 //        TODO: zoom to the user location after taking his permission
@@ -130,8 +126,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                 } else {
                     Toast.makeText(this.requireContext(), "Permission Denied", Toast.LENGTH_SHORT)
                         .show()
-                    view?.findNavController()
-                        ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
+
                 }
                 return
             }
