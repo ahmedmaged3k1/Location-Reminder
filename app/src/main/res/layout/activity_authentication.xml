@@ -113,7 +113,7 @@
                 android:fontFamily="@font/raleway"
                 android:gravity="center"
                 android:lineHeight="65sp"
-                android:text="Welcome Back"
+                android:text=""
                 android:textColor="@color/white"
                 android:textFontWeight="800"
                 android:textSize="65sp"
