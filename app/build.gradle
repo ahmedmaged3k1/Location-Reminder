@@ -1,9 +1,20 @@
+plugins {
+    id 'com.android.application'
+
+
+    id 'kotlin-kapt'
+    id("kotlin-parcelize")
+
+
+
+}
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion 32
@@ -45,6 +56,7 @@ android {
 apply plugin: 'com.google.gms.google-services'
 
 dependencies {
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // App dependencies
     implementation "androidx.appcompat:appcompat:$appCompatVersion"

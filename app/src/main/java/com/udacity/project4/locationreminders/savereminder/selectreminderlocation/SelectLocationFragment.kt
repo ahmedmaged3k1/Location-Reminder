@@ -11,8 +11,10 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -28,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragmentDirections
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
@@ -41,7 +45,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
+
     private var locationPermissionGranted = false
+    private var poiPlaces = mutableListOf<ReminderDTO>()
+
+    private lateinit var saveLocationButton  :AppCompatButton
+    private lateinit var getMyLocationButton  :ImageView
+
     private val defaultZoom = 15f
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var mMap: GoogleMap
@@ -64,12 +74,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
-
+        saveLocationButton=binding.root.findViewById(R.id.appCompatButton)
+        getMyLocationButton=binding.root.findViewById(R.id.getDeviceLocation)
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
-
-
-        //        TODO: add the map setup implementation
 
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -79,17 +87,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
         }
         initMap()
+        getMyLocation()
 
-//        TODO: zoom to the user location after taking his permission
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
-
-
-//        TODO: call this function after the user confirms on the selected location
         onLocationSelected()
 
         return binding.root
     }
+
 
     private fun setMapLongClick(map: GoogleMap?) {
         map?.setOnMapLongClickListener { latLng ->
@@ -100,6 +104,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                 latLng.latitude,
                 latLng.longitude
             )
+
             map.addMarker(
                 MarkerOptions()
                     .position(latLng)
@@ -132,7 +137,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                 ).show()
                 locationPermissionGranted = true
                 getDeviceLocation()
-                setMapLongClick(mMap)
+              //  setMapLongClick(mMap)
                 setPoiClick(mMap)
             } else {
                 // Do otherwise
@@ -153,6 +158,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
 
     }
+    private fun getMyLocation(){
+        getMyLocationButton.setOnClickListener(View.OnClickListener {
+            getDeviceLocation()
+        })
+    }
 
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poi ->
@@ -161,14 +171,27 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                     .position(poi.latLng)
                     .title(poi.name)
             )
+            val reminder = ReminderDTO(poi.name,"","",poi.latLng.latitude,poi.latLng.longitude,poi.placeId)
+            poiPlaces.add(reminder)
+            _viewModel.reminderTitle.value=poi.name
+            _viewModel.latitude.value=poi.latLng.latitude
+            _viewModel.longitude.value=poi.latLng.longitude
+            _viewModel.selectedPOI.value=poi
+            _viewModel.reminderSelectedLocationStr.value=poi.name
+
+
+
+
             poiMarker.showInfoWindow()
         }
     }
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+        saveLocationButton.setOnClickListener {
+
+            view?.findNavController()
+                ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
+        }
     }
 
 

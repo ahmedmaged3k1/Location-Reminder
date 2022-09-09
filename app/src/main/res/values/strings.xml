@@ -49,4 +49,5 @@
     <string name="don_t_have_an_account" />
     <string name="register_now" />
     <string name="welcome_to_location_reminder_app">Welcome To Location Reminder App</string>
+    <string name="saveData">Save</string>
 </resources>

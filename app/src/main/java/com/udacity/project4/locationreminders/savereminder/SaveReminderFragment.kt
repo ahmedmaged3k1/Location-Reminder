@@ -1,10 +1,13 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.navArgs
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -26,7 +29,10 @@ class SaveReminderFragment : BaseFragment() {
 
         setDisplayHomeAsUpEnabled(true)
 
+
         binding.viewModel = _viewModel
+
+        Log.d(TAG, "onCreateView: view model  ${_viewModel.selectedPOI.value.toString()}")
 
         return binding.root
     }
