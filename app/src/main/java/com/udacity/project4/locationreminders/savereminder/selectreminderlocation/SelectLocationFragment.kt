@@ -173,7 +173,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
             )
             val reminder = ReminderDTO(poi.name,"","",poi.latLng.latitude,poi.latLng.longitude,poi.placeId)
             poiPlaces.add(reminder)
-            _viewModel.reminderTitle.value=poi.name
+           // _viewModel.reminderTitle.value=poi.name
             _viewModel.latitude.value=poi.latLng.latitude
             _viewModel.longitude.value=poi.latLng.longitude
             _viewModel.selectedPOI.value=poi

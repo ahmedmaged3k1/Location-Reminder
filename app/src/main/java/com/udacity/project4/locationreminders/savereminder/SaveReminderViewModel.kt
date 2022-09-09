@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 
 class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSource) :
     BaseViewModel(app) {
+
+    private  val HINT_INDEX_KEY = "hintIndex"
+    private  val GEOFENCE_INDEX_KEY = "geofenceIndex"
     val reminderTitle = MutableLiveData<String?>()
     val reminderDescription = MutableLiveData<String?>()
     val reminderSelectedLocationStr = MutableLiveData<String?>()
@@ -79,4 +82,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         }
         return true
     }
+
+
+
 }
