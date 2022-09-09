@@ -124,6 +124,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                 locationPermissionGranted = true
                 getDeviceLocation()
                 setMapLongClick(mMap)
+                setPoiClick(mMap)
             } else {
                 // Do otherwise
                 Log.d(TAG, "initMap:  not granted  ")
@@ -143,6 +144,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
 
 
+    }
+    private fun setPoiClick(map: GoogleMap) {
+        map.setOnPoiClickListener { poi ->
+            val poiMarker = map.addMarker(
+                MarkerOptions()
+                    .position(poi.latLng)
+                    .title(poi.name)
+            )
+            poiMarker.showInfoWindow()
+        }
     }
 
     private fun onLocationSelected() {
