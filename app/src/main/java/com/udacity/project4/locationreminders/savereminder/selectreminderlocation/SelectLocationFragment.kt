@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 
 import android.Manifest
+import android.annotation.TargetApi
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.location.Address
@@ -45,8 +46,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var mMap: GoogleMap
     private var mapReady = false
-
-
+    private val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
+    private val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
+    private val REQUEST_TURN_DEVICE_LOCATION_ON = 29
+    private val TAG = "HuntMainActivity"
+    private val LOCATION_PERMISSION_INDEX = 0
+    private val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
+    private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
+            android.os.Build.VERSION_CODES.Q
 
 
     override fun onCreateView(
@@ -73,11 +80,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         }
         initMap()
 
-
 //        TODO: zoom to the user location after taking his permission
 //        TODO: add style to the map
 //        TODO: put a marker to location that the user selected
-       
 
 
 //        TODO: call this function after the user confirms on the selected location
@@ -111,7 +116,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         val permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
-            Log.d(TAG, "initMap: is granted $isGranted")
+            if (  !requestForegroundAndBackgroundLocationPermissions())
+            {
+                return@registerForActivityResult
+            }
+
             if (isGranted) {
                 // Do if the permission is granted
                 Log.d(TAG, "initMap: granted  ")
@@ -143,8 +152,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
 
-
     }
+
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poi ->
             val poiMarker = map.addMarker(
@@ -190,7 +199,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         }
         else -> super.onOptionsItemSelected(item)
     }
-
 
 
     private fun getDeviceLocation() {
@@ -248,6 +256,74 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
     override fun onMapReady(p0: GoogleMap?) {
         Log.d(TAG, "onMapReady: asasdd")
 
+    }
+
+    @TargetApi(29)
+    private fun foregroundAndBackgroundLocationPermissionApproved(): Boolean {
+        val foregroundLocationApproved = (
+                PackageManager.PERMISSION_GRANTED ==
+                        ActivityCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ))
+        val backgroundPermissionApproved =
+            if (runningQOrLater) {
+                PackageManager.PERMISSION_GRANTED ==
+                        ActivityCompat.checkSelfPermission(
+                            requireContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        )
+            } else {
+                true
+            }
+        return foregroundLocationApproved && backgroundPermissionApproved
+    }
+
+    @TargetApi(29)
+    private fun requestForegroundAndBackgroundLocationPermissions() : Boolean{
+        var option = -1
+        if (foregroundAndBackgroundLocationPermissionApproved()) {
+            return true
+        }
+
+        var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        val resultCode = when {
+            runningQOrLater -> {
+                permissionsArray += Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
+
+            }
+
+            else -> {
+                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+
+            }
+
+        }
+        if (runningQOrLater) {
+            Toast.makeText(
+                this.requireContext(),
+                "Please Allow Location for all time to enable geofencing",
+                Toast.LENGTH_SHORT
+            ).show()
+
+        }
+       else{
+            Toast.makeText(
+                this.requireContext(),
+                "Please Allow Location Access",
+                Toast.LENGTH_SHORT
+            ).show()
+
+        }
+
+
+
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            permissionsArray,
+            resultCode
+        )
+        return false
     }
 
 
