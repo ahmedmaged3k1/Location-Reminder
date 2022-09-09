@@ -13,6 +13,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -30,6 +31,8 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
@@ -42,6 +45,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var mMap: GoogleMap
     private var mapReady = false
+
+
 
 
     override fun onCreateView(
@@ -58,10 +63,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
 
         //        TODO: add the map setup implementation
+
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync { it ->
+            mMap = it
+            mapReady = true
+
+        }
         initMap()
+
+
 //        TODO: zoom to the user location after taking his permission
 //        TODO: add style to the map
 //        TODO: put a marker to location that the user selected
+       
 
 
 //        TODO: call this function after the user confirms on the selected location
@@ -70,53 +86,63 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         return binding.root
     }
 
+    private fun setMapLongClick(map: GoogleMap?) {
+        map?.setOnMapLongClickListener { latLng ->
+            // A Snippet is Additional text that's displayed below the title.
+            val snippet = String.format(
+                Locale.getDefault(),
+                "Lat: %1$.5f, Long: %2$.5f",
+                latLng.latitude,
+                latLng.longitude
+            )
+            map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title(getString(R.string.dropped_pin))
+                    .snippet(snippet)
+
+            )
+        }
+    }
 
     private fun initMap() {
 
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            val permissionLauncher = registerForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted ->
-                if (isGranted) {
-                    // Do if the permission is granted
-                    Toast.makeText(
-                        this.requireContext(),
-                        "Permission Granted",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        Log.d(TAG, "initMap: entered condition ")
+        val permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            Log.d(TAG, "initMap: is granted $isGranted")
+            if (isGranted) {
+                // Do if the permission is granted
+                Log.d(TAG, "initMap: granted  ")
 
-                    val mapFragment =
-                        childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-                    mapFragment.getMapAsync { it ->
-                        mMap = it
-                        mapReady = true
+                Toast.makeText(
+                    this.requireContext(),
+                    "Permission Granted",
+                    Toast.LENGTH_SHORT
+                ).show()
+                locationPermissionGranted = true
+                getDeviceLocation()
+                setMapLongClick(mMap)
+            } else {
+                // Do otherwise
+                Log.d(TAG, "initMap:  not granted  ")
 
-                        locationPermissionGranted = true
-                        getDeviceLocation()
-
-                    }
-                } else {
-                    // Do otherwise
-                    Toast.makeText(
-                        this.requireContext(),
-                        "Permission Denied",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    view?.findNavController()
-                        ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
-                }
+                Toast.makeText(
+                    this.requireContext(),
+                    "Permission Denied",
+                    Toast.LENGTH_SHORT
+                ).show()
+                view?.findNavController()
+                    ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
             }
-
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+        Log.d(TAG, "initMap: last area  statemnet  ")
+
+        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
+
+
     }
 
     private fun onLocationSelected() {
@@ -154,9 +180,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         else -> super.onOptionsItemSelected(item)
     }
 
-    override fun onMapReady(p0: GoogleMap?) {
-        TODO("Not yet implemented")
-    }
+
 
     private fun getDeviceLocation() {
 
@@ -207,6 +231,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         val options = MarkerOptions().position(latLng).title(title)
         mMap.addMarker(options)
 
+
+    }
+
+    override fun onMapReady(p0: GoogleMap?) {
+        Log.d(TAG, "onMapReady: asasdd")
 
     }
 
