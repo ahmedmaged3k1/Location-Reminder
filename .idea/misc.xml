@@ -5,11 +5,13 @@
       <map>
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/drawable-v24/ic_sugar_svgrepo_com__2_.xml" value="0.104" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/activity_authentication.xml" value="0.22780797101449277" />
+        <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/activity_reminder_description.xml" value="0.22780797101449277" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/activity_reminders.xml" value="0.22780797101449277" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/fragment_login.xml" value="0.264" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/fragment_registration.xml" value="0.1" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/fragment_save_reminder.xml" value="0.22780797101449277" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/fragment_select_location.xml" value="0.16" />
+        <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/layout/it_reminder.xml" value="0.22780797101449277" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/menu/main_menu.xml" value="0.23229166666666667" />
         <entry key="..\:/Mobile App Development/FWD/nd940-android-kotlin-c4-starter-master/starter/app/src/main/res/menu/map_options.xml" value="0.23229166666666667" />
       </map>
