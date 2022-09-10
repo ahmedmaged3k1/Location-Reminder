@@ -10,6 +10,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.udacity.project4.R
+import com.udacity.project4.locationreminders.data.local.LocalDB
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
+import kotlinx.coroutines.runBlocking
 import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -33,7 +36,14 @@ class ReminderJobService : JobService() {
                 if (jobCancelled) {
                     return@Thread
                 }
-                showNotification(applicationContext, "Reminder job service scheduler")
+
+                var localDb = LocalDB.createRemindersDao(applicationContext )
+                runBlocking {
+                    val last = localDb.getReminders().last()
+                    showNotification(applicationContext, "\"The ${last.title} place is entered \"")
+
+                }
+
                 jobFinished(params, true)
             }
         }.start()

@@ -89,7 +89,7 @@ class SaveReminderFragment : BaseFragment() {
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
             createGeoFence(LatLng(latitude!!.toDouble(), longitude!!.toDouble()), geofencingClient)
-            //scheduleJob()
+            scheduleJob()
             /* if (_viewModel.geofenceIsActive()) return@setOnClickListener
              val currentGeofenceIndex = _viewModel.nextGeofenceIndex()
              if(currentGeofenceIndex >= GeofencingConstants.NUM_LANDMARKS) {
@@ -262,8 +262,8 @@ class SaveReminderFragment : BaseFragment() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun scheduleJob() {
 
-    //    val componentName = ComponentName(this, ReminderJobService::class.java)
-        val info = JobInfo.Builder(321,         requireActivity().componentName)
+        val componentName = ComponentName(requireActivity().applicationContext, ReminderJobService::class.java)
+        val info = JobInfo.Builder(321,         componentName)
             .setRequiresCharging(false)
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setPersisted(true)

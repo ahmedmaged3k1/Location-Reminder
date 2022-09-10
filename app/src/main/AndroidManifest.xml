@@ -44,7 +44,10 @@
 
 
         </activity>
-
+        <service
+            android:name=".locationreminders.geofence.ReminderJobService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver
             android:name=".locationreminders.geofence.GeofenceBroadcastReceiver"
@@ -56,10 +59,7 @@
             android:name=".locationreminders.geofence.GeofenceTransitionsJobIntentService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".locationreminders.geofence.ReminderJobService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+
     </application>
 
 </manifest>
