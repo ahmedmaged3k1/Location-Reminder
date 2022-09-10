@@ -58,6 +58,9 @@ apply plugin: 'com.google.gms.google-services'
 dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha01'
     // App dependencies
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "androidx.legacy:legacy-support-v4:$androidXLegacySupport"

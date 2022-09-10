@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
@@ -77,7 +79,8 @@ fun NotificationManager.sendGeofenceEnteredNotification(context: Context, foundI
         .setSmallIcon(R.drawable.map_small)
         .setStyle(bigPicStyle)
         .setLargeIcon(mapImage)
-
+    Log.d(
+        TAG, "sendGeofenceEnteredNotification:  notfication ")
     notify(NOTIFICATION_ID, builder.build())
 }
 

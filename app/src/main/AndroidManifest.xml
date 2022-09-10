@@ -43,10 +43,13 @@
 
 
         </activity>
+
+
         <receiver
             android:name=".locationreminders.geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
+
             android:permission="TODO" />
         <service
             android:name=".locationreminders.geofence.GeofenceTransitionsJobIntentService"

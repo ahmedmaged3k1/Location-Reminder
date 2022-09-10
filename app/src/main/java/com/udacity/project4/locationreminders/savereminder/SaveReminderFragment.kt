@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.PendingIntent
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.findNavController
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -37,9 +39,9 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var binding: FragmentSaveReminderBinding
 
     private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(this.activity, GeofenceBroadcastReceiver::class.java)
-        intent.action = ACTION_GEOFENCE_EVENT
-        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
+        //intent.action = ACTION_GEOFENCE_EVENT
+        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     companion object {
@@ -54,13 +56,12 @@ class SaveReminderFragment : BaseFragment() {
     ): View? {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
-         var roomDoa = LocalDB.createRemindersDao(requireContext())
-         var localRepo = RemindersLocalRepository(roomDoa)
+
         setDisplayHomeAsUpEnabled(true)
 
+        geofencingClient = LocationServices.getGeofencingClient(requireContext())
 
         binding.viewModel = _viewModel
-        geofencingClient = LocationServices.getGeofencingClient(requireContext())
         Log.d(TAG, "onCreateView: view model  ${_viewModel.selectedPOI.value.toString()}")
 
         return binding.root
@@ -85,6 +86,16 @@ class SaveReminderFragment : BaseFragment() {
 
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
+
+            if (_viewModel.geofenceIsActive()) return@setOnClickListener
+            val currentGeofenceIndex = _viewModel.nextGeofenceIndex()
+            if(currentGeofenceIndex >= GeofencingConstants.NUM_LANDMARKS) {
+               // removeGeofences()
+                _viewModel.geofenceActivated()
+                return@setOnClickListener
+            }
+            Log.d(TAG, "onViewCreated: $latitude and $longitude")
+            val currentGeofenceData = GeofencingConstants.LANDMARK_DATA[currentGeofenceIndex]
             val geofence = Geofence.Builder()
                 .setRequestId(_viewModel.selectedPOI.value?.placeId)
                 .setCircularRegion(
@@ -124,6 +135,7 @@ class SaveReminderFragment : BaseFragment() {
                                 Toast.LENGTH_SHORT
                             )
                                 .show()
+
 
                         }
                         addOnFailureListener {

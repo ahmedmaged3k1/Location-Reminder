@@ -1,14 +1,14 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.android.gms.maps.model.PointOfInterest
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.geofence.GeofencingConstants
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.launch
 
@@ -82,6 +82,39 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         }
         return true
     }
+     var state: SavedStateHandle = SavedStateHandle()
+    private val _geofenceIndex = state.getLiveData(GEOFENCE_INDEX_KEY, -1)
+    private val _hintIndex = state.getLiveData(HINT_INDEX_KEY, 0)
+    val geofenceIndex: LiveData<Int>
+        get() = _geofenceIndex
+
+    val geofenceHintResourceId = Transformations.map(geofenceIndex) {
+        val index = geofenceIndex.value ?: -1
+        when {
+            index < 0 -> R.string.not_started_hint
+            index < GeofencingConstants.NUM_LANDMARKS -> GeofencingConstants.LANDMARK_DATA[geofenceIndex.value!!].hint
+            else -> R.string.geofence_over
+        }
+    }
+
+    val geofenceImageResourceId = Transformations.map(geofenceIndex) {
+        val index = geofenceIndex.value ?: -1
+        when {
+            index < GeofencingConstants.NUM_LANDMARKS -> R.drawable.map_small
+            else -> R.drawable.android_treasure
+        }
+    }
+
+    fun updateHint(currentIndex: Int) {
+        _hintIndex.value = currentIndex+1
+    }
+
+    fun geofenceActivated() {
+        _geofenceIndex.value = _hintIndex.value
+    }
+
+    fun geofenceIsActive() =_geofenceIndex.value == _hintIndex.value
+    fun nextGeofenceIndex() = _hintIndex.value ?: 0
 
 
 
