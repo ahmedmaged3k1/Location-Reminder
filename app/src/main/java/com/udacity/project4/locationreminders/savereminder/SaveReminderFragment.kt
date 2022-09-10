@@ -89,7 +89,7 @@ class SaveReminderFragment : BaseFragment() {
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
             createGeoFence(LatLng(latitude!!.toDouble(), longitude!!.toDouble()), geofencingClient)
-            scheduleJob()
+            //scheduleJob()
             /* if (_viewModel.geofenceIsActive()) return@setOnClickListener
              val currentGeofenceIndex = _viewModel.nextGeofenceIndex()
              if(currentGeofenceIndex >= GeofencingConstants.NUM_LANDMARKS) {
