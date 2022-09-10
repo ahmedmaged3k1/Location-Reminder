@@ -10,7 +10,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.udacity.project4.R
-
+import com.udacity.project4.locationreminders.data.local.LocalDB
+import com.udacity.project4.locationreminders.data.local.RemindersDatabase
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
+import kotlinx.coroutines.runBlocking
 
 /**
  * Triggered by the Geofence.  Since we can have many Geofences at once, we pull the request
@@ -23,58 +26,40 @@ import com.udacity.project4.R
  */
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
+
+
+
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        Log.d(TAG, "onReceive:  ")
-        if (intent != null) {
+        Log.d(TAG, "onReceive: enterd in function  happend")
 
-                val geofencingEvent = GeofencingEvent.fromIntent(intent)
+        if (context != null) {
+            val geofencingEvent = GeofencingEvent.fromIntent(intent)
+            val geofencingTransition = geofencingEvent.geofenceTransition
 
-                if (geofencingEvent.hasError()) {
-                    val errorMessage = context?.let { errorMessage(it, geofencingEvent.errorCode) }
+            if (geofencingTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofencingTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
+                // Retrieve data from intent
 
-                    return
+
+                var localDb = LocalDB.createRemindersDao(context)
+                runBlocking {
+                    var last = localDb.getReminders().last()
+                    SaveReminderFragment
+                        .showNotification(
+                            context.applicationContext,
+                            "The ${last.title} place is entered "
+                        )
                 }
 
-                if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+
+                Log.d(TAG, "onReceive: enterd in local  happend")
 
 
-                    val fenceId = when {
-                        geofencingEvent.triggeringGeofences.isNotEmpty() ->
-                            geofencingEvent.triggeringGeofences[0].requestId
-                        else -> {
-                            Log.e(TAG, "No Geofence Trigger Found! Abort mission!")
-                            return
-                        }
-                    }
-                    // Check geofence against the constants listed in GeofenceUtil.kt to see if the
-                    // user has entered any of the locations we track for geofences.
-                    val foundIndex = GeofencingConstants.LANDMARK_DATA.indexOfFirst {
-                        it.id == fenceId
-                    }
 
-                    // Unknown Geofences aren't helpful to us
-                    /* if ( -1 == foundIndex ) {
-                         Log.e(TAG, "Unknown Geofence: Abort Mission")
-                         return
-                     }*/
-
-                    val notificationManager = context?.let {
-                        ContextCompat.getSystemService(
-                            it,
-                            NotificationManager::class.java
-                        )
-                    } as NotificationManager
-
-                    Log.d(TAG, "onReceive: before sending  ")
-                    if (context != null) {
-                        notificationManager.sendGeofenceEnteredNotification(
-                            context, foundIndex
-                        )
-                    }
-                }
+                // remove geofence
+                val triggeringGeofences = geofencingEvent.triggeringGeofences
+                SaveReminderFragment.removeGeofences(context, triggeringGeofences)
             }
-
-
+        }
     }
 }
