@@ -41,14 +41,9 @@ class SaveReminderFragment : BaseFragment() {
 
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
-        intent.action = ACTION_GEOFENCE_EVENT
         PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    companion object {
-        internal const val ACTION_GEOFENCE_EVENT =
-            "HuntMainActivity.treasureHunt.action.ACTION_GEOFENCE_EVENT"
-    }
 
 
     override fun onCreateView(
@@ -57,13 +52,10 @@ class SaveReminderFragment : BaseFragment() {
     ): View? {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
-
         setDisplayHomeAsUpEnabled(true)
-
-        geofencingClient = LocationServices.getGeofencingClient(requireContext())
+        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
         createChannel(requireContext())
         binding.viewModel = _viewModel
-        Log.d(TAG, "onCreateView: view model  ${_viewModel.selectedPOI.value.toString()}")
 
         return binding.root
     }
