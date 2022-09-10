@@ -57,7 +57,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
     private var locationPermissionGranted = false
     private var poiPlaces = mutableListOf<ReminderDTO>()
     private lateinit var saveLocationButton  :AppCompatButton
-    private lateinit var getMyLocationButton  :ImageView
     private val defaultZoom = 15f
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var mMap: GoogleMap
@@ -81,11 +80,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
         saveLocationButton=binding.root.findViewById(R.id.appCompatButton)
-        getMyLocationButton=binding.root.findViewById(R.id.getDeviceLocation)
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
         //initMap()
-        getMyLocation()
+
 
         onLocationSelected()
 
@@ -94,47 +92,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
 
 
 
-    private fun initMap() {
 
-        Log.d(TAG, "initMap: entered condition ")
-        val permissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted ->
-            if (  !requestForegroundAndBackgroundLocationPermissions())
-            {
-                return@registerForActivityResult
-            }
-
-            if (isGranted) {
-                // Do if the permission is granted
-                Log.d(TAG, "initMap: granted  ")
-
-                Toast.makeText(
-                    this.requireContext(),
-                    "Permission Granted",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-
-            } else {
-                // Do otherwise
-                Log.d(TAG, "initMap:  not granted  ")
-
-                Toast.makeText(
-                    this.requireContext(),
-                    "Permission Denied",
-                    Toast.LENGTH_SHORT
-                ).show()
-                view?.findNavController()
-                    ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
-            }
-        }
-        Log.d(TAG, "initMap: last area  statemnet  ")
-
-        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-
-    }
 
 
     private fun getDeviceLocation() {
@@ -169,6 +127,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                             "My Location",
                         )
                         Log.d(TAG, "getDeviceLocation: ${currentLocation.latitude}")
+
                         val geocoder = Geocoder(requireContext())
                         var addresses: List<Address?>? = ArrayList()
                         try {
@@ -200,7 +159,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                 mMap=p0
             }
             locationPermissionGranted = true
-            getDeviceLocation()
+            enableMyLocation()
+            //getDeviceLocation()
             setMapStyle(mMap)
             setMapLongClick(mMap)
             setPoiClick(mMap)
@@ -299,6 +259,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                     grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
                     PackageManager.PERMISSION_DENIED))
         {
+
             Snackbar.make(
                 binding.root.findViewById(R.id.mapsLayout),
                 R.string.permission_denied_explanation,
@@ -312,7 +273,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                     })
                 }.show()
         } else {
-           // checkDeviceLocationSettingsAndStartGeofence()
+
+            // checkDeviceLocationSettingsAndStartGeofence()
         }
     }
     private fun moveCamera(latLng: LatLng, zoom: Float, title: String) {
@@ -368,11 +330,37 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
             requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED
     }
-    private fun getMyLocation(){
-        getMyLocationButton.setOnClickListener(View.OnClickListener {
+    private fun enableMyLocation() {
+        if (isPermissionGranted()) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            mMap.isMyLocationEnabled = true
             getDeviceLocation()
-        })
+        }
+        else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
+            )
+        }
     }
+
 
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poi ->

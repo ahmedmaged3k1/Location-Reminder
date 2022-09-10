@@ -39,18 +39,6 @@
 
         </androidx.appcompat.widget.AppCompatButton>
 
-        <ImageView
-            android:id="@+id/getDeviceLocation"
-            android:layout_width="37dp"
 
-            android:layout_height="86dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_baseline_gps_fixed_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.957"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </ImageView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
