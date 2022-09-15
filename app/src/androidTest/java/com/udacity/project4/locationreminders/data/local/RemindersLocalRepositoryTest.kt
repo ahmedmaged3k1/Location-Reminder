@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
@@ -25,6 +24,50 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
-//    TODO: Add testing implementation to the RemindersLocalRepository.kt
 
+    @get:Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
+
+    private lateinit var remindersLocalRepository: RemindersLocalRepository
+    private lateinit var remindersDatabase: RemindersDatabase
+
+    @Before
+    fun setup() {
+        remindersDatabase = Room.inMemoryDatabaseBuilder(
+            ApplicationProvider.getApplicationContext(),
+            RemindersDatabase::class.java
+        ).allowMainThreadQueries().build()
+
+        remindersLocalRepository = RemindersLocalRepository(
+            remindersDatabase.reminderDao(), Dispatchers.Main
+        )
+    }
+
+    @Test
+    fun `gettingReminderTestFromDataSource`() = runBlocking {
+        val testReminder = ReminderDTO(
+            "Reminder Title ", "Reminder Desctiption ", "Reminder Location",
+            69.96, 63.485
+        )
+
+        remindersLocalRepository.saveReminder(testReminder)
+
+        val result = remindersLocalRepository.getReminder(testReminder.id)
+        result as Result.Success
+        assertThat(result.data.title, `is`("Reminder Title "))
+        assertThat(result.data.latitude, `is`(69.96))
+        assertThat(result.data.location, `is`("Reminder Location"))
+        assertThat(result.data.description, `is`("Reminder Desctiption "))
+        assertThat(result.data.longitude, `is`(63.485))
+
+    }
+
+
+    @After
+    fun cleanUp() {
+        remindersDatabase.close()
+    }
 }

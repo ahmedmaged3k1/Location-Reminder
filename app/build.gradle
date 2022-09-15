@@ -132,6 +132,7 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-intents:$espressoVersion"
     androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:$espressoVersion"
     androidTestImplementation "junit:junit:$junitVersion"
+
     // Once https://issuetracker.google.com/127986458 is fixed this can be testImplementation
     debugImplementation "androidx.fragment:fragment-testing:$fragmentVersion"
     implementation "androidx.test:core:$androidXTestCoreVersion"
@@ -151,7 +152,10 @@ dependencies {
 
     // Koin Test
     testImplementation "io.insert-koin:koin-test:$koinVersion"
-    testImplementation "org.mockito:mockito-inline:4.5.1"
+    
+
+    androidTestImplementation ("org.koin:koin-test:$koinVersion") { exclude group: 'org.mockito' }
+
     implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
 
 
