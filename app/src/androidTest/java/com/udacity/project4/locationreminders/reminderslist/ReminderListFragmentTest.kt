@@ -20,7 +20,6 @@ import com.udacity.project4.locationreminders.data.local.FakeDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -58,6 +57,7 @@ class ReminderListFragmentTest {
             modules(listOf(myModule))
         }
     }
+
     @Test
     fun displayRemindersDataUiTest() = runBlockingTest {
         setupFragmentTest()
@@ -91,10 +91,4 @@ class ReminderListFragmentTest {
     }
 
 
-
-
-    @After
-    fun stopDown() {
-        stopKoin()
-    }
 }

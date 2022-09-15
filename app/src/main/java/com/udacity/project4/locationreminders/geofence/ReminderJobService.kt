@@ -42,8 +42,12 @@ class ReminderJobService : JobService() {
 
                 var localDb = LocalDB.createRemindersDao(applicationContext )
                 runBlocking {
-                    val last = localDb.getReminders().last()
-                    showNotification(applicationContext, "\"The ${last.title} place is entered \"")
+                    if (localDb.getReminders().isNotEmpty())
+                    {
+                        val last = localDb.getReminders().last()
+                        showNotification(applicationContext, "\"The ${last.title} place is entered \"")
+
+                    }
 
                 }
 

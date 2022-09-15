@@ -43,12 +43,16 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
                 var localDb = LocalDB.createRemindersDao(context)
                 runBlocking {
-                    var last = localDb.getReminders().last()
-                    SaveReminderFragment
-                        .showNotification(
-                            context.applicationContext,
-                            "The ${last.title} place is entered "
-                        )
+                    if (localDb.getReminders().isNotEmpty())
+                    {
+                        var last = localDb.getReminders().last()
+                        SaveReminderFragment
+                            .showNotification(
+                                context.applicationContext,
+                                "The ${last.title} place is entered "
+                            )
+                    }
+
                 }
 
 
