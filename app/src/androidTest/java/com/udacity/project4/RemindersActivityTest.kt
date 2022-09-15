@@ -6,8 +6,8 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.udacity.project4.locationreminders.RemindersActivity
@@ -74,20 +74,19 @@ class RemindersActivityTest :
     }
 
 
-//    TODO: add End to End testing to the app
-@Test
-fun `TestingSavingValidReminder`(){
-    val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
-    onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
-    onView(withId(R.id.addReminderFAB)).perform(click())
-    onView(withId(R.id.reminderTitle)).perform(replaceText("Test Title "))
-    onView(withId(R.id.reminderDescription)).perform(replaceText("Test Description "))
-    onView(withId(R.id.selectLocation)).perform(click())
-
-    onView(withId(R.id.map)).perform(longClick())
-    onView(withId(R.id.appCompatButton)).perform(click())
-    onView(withId(R.id.saveReminder)).perform(click())
-    activityScenario.close()
-}
+    //    TODO: add End to End testing to the app
+    @Test
+    fun `TestingSavingValidReminder`() {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle)).perform(replaceText("Test Title "))
+        onView(withId(R.id.reminderDescription)).perform(replaceText("Test Description "))
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.map)).perform(longClick())
+        onView(withId(R.id.appCompatButton)).perform(click())
+        onView(withId(R.id.saveReminder)).perform(click())
+        activityScenario.close()
+    }
 
 }
