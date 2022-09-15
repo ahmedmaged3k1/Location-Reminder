@@ -160,7 +160,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
             }
             locationPermissionGranted = true
             enableMyLocation()
-            //getDeviceLocation()
+            getDeviceLocation()
             setMapStyle(mMap)
             setMapLongClick(mMap)
             setPoiClick(mMap)

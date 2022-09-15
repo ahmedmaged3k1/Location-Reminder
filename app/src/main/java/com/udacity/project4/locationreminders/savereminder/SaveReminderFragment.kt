@@ -161,7 +161,7 @@ class SaveReminderFragment : BaseFragment() {
                 )
             }
             if (reminder != null) {
-                _viewModel.saveReminder(reminder)
+                _viewModel.validateAndSaveReminder(reminder)
             }
             view?.findNavController()
                 ?.navigate(R.id.action_saveReminderFragment_to_reminderListFragment)
