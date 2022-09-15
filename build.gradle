@@ -60,7 +60,7 @@ ext {
     materialVersion = '1.6.1'
     fragmentVersion = '1.1.0-alpha07'
     recyclerViewVersion = '1.2.1'
-    mockitoVersion = '4.5.1'
+    mockitoVersion = '2.8.9'
     constraintVersion = '2.0.0-alpha03'
     dexMakerVersion = '2.12.1'
     coroutinesVersion = '1.2.1'
