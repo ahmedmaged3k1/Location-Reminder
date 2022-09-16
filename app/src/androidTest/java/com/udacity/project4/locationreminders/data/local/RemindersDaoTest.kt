@@ -19,18 +19,23 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.lang.Exception
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 
-class RemindersDaoTest {
+class RemindersDaoTest     {
 
     //    TODO: Add testing implementation to the RemindersDao.kt
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
     private lateinit var remindersDatabase: RemindersDatabase
+    private var shouldReturnError = false
 
+    fun setShouldReturnError(shouldReturn: Boolean) {
+        this.shouldReturnError = shouldReturn
+    }
     @Before
     fun initDb() {
         remindersDatabase = Room.inMemoryDatabaseBuilder(
@@ -72,5 +77,6 @@ class RemindersDaoTest {
     }
     @After
     fun closeDatabase() = remindersDatabase.close()
+
 
 }

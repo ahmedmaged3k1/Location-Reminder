@@ -67,7 +67,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
     private val TAG = "HuntMainActivity"
     private val LOCATION_PERMISSION_INDEX = 0
     private val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
-    private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
+    private val runningQOrLater = android.os.Build.VERSION.SDK_INT >
             android.os.Build.VERSION_CODES.Q
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -113,8 +113,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
                                 "Cannot Get Last Location",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            view?.findNavController()
-                                ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
+                     /*       view?.findNavController()
+                                ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)*/
                             return@addOnCompleteListener
                         }
                         val currentLocation = it.result as Location
