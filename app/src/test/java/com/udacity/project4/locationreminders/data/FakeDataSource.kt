@@ -9,27 +9,63 @@ class FakeDataSource : ReminderDataSource {
     //    TODO: Create a fake data source to act as a double to the real data source
     var remindersList = mutableListOf<ReminderDTO>()
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        return Result.Success(remindersList)
+        try {
+
+
+            return Result.Success(remindersList)
+
+        }
+        catch (ex: Exception) {
+            return Result.Error(ex.localizedMessage)
+
+        }
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
-       if (reminder!=null)
-       {
-           remindersList.add(reminder)
 
-       }
+        try {
+
+            if (reminder!=null)
+            {
+                remindersList.add(reminder)
+
+            }
+
+        }
+        catch (ex: Exception) {
+             Result.Error(ex.localizedMessage)
+
+        }
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        remindersList.forEach{
-            if (it.id==id)
-                return Result.Success(it)
+
+        try {
+            remindersList.forEach{
+                if (it.id==id)
+                    return Result.Success(it)
+            }
+            return Result.Error("Cannot Found The Reminder With Id $id")
+
         }
-        return Result.Error("Cannot Found The Reminder With Id $id")
+        catch (ex: Exception) {
+            return Result.Error(ex.localizedMessage)
+
+        }
+
     }
 
     override suspend fun deleteAllReminders() {
-        remindersList.clear()
+        try {
+
+            remindersList.clear()
+
+
+        }
+        catch (ex: Exception) {
+             Result.Error(ex.localizedMessage)
+
+        }
     }
 
 

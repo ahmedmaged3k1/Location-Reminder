@@ -70,11 +70,12 @@ class SaveReminderViewModelTest {
     fun `testing show loading live data `() = runBlocking {
 
         initRepository()
-        mainCoroutineRule.pauseDispatcher()
         val testReminder = ReminderDataItem(
             "test reminder", "Description ", "Location ",
             32.967892, 31.394
         )
+        mainCoroutineRule.pauseDispatcher()
+
         saveReminderViewModel.validateAndSaveReminder(testReminder)
 
         assertThat(saveReminderViewModel.showLoading.getOrAwaitValue(), CoreMatchers.`is`(true))
