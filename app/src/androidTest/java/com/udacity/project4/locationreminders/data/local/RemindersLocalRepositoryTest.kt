@@ -64,6 +64,19 @@ class RemindersLocalRepositoryTest {
         assertThat(result.data.longitude, `is`(63.485))
 
     }
+    @Test
+    fun gettingReminderWithInvalidId( )= runBlocking {
+        val testReminder = ReminderDTO(
+            "Reminder Title ", "Reminder Desctiption ", "Reminder Location",
+            69.96, 63.485
+        )
+        remindersLocalRepository.saveReminder(testReminder)
+        val result = remindersLocalRepository.getReminder("545489")
+
+        result as Result.Error
+        assertThat(result.message, `is`("Reminder not found!"))
+    }
+
 
 
     @After
