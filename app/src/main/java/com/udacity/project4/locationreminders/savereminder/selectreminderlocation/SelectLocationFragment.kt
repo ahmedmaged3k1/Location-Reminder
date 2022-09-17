@@ -166,14 +166,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback,
             setPoiClick(mMap)
         }
         else{
-            getLastLocation()
+           // getLastLocation()
             Toast.makeText(
                 this.requireContext(),
-                "Location Not Availaible ",
+                "Your Current Location is  not Availaible ",
                 Toast.LENGTH_SHORT
             ).show()
-            view?.findNavController()
-                ?.navigate(R.id.action_selectLocationFragment_to_saveReminderFragment)
+
         }
     }
 
