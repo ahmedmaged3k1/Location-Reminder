@@ -175,13 +175,7 @@ class SaveReminderFragment : BaseFragment() {
                      }
                  }
              }*/
-//             2) save the reminder to the local db
-            val reminder = _viewModel.selectedPOI.value?.let { it1 ->
-                ReminderDataItem(
-                    title.toString(), description.toString(), location, latitude, longitude,
-                    it1.placeId
-                )
-            }
+//
 
             val reminder1 = ReminderDataItem(
                 _viewModel.reminderTitle.value,
@@ -195,8 +189,9 @@ class SaveReminderFragment : BaseFragment() {
             if (_viewModel.validateEnteredData(reminder1))
             {
                 _viewModel.saveReminder(reminder1)
-                view?.findNavController()
-                    ?.navigate(R.id.action_saveReminderFragment_to_reminderListFragment)
+
+
+
             }
 
 
