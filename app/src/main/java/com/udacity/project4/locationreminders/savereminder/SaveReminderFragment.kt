@@ -12,26 +12,26 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Context.JOB_SCHEDULER_SERVICE
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingClient
-import com.google.android.gms.location.GeofencingRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
@@ -54,6 +54,7 @@ class SaveReminderFragment : BaseFragment() {
     private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
             android.os.Build.VERSION_CODES.Q
     private lateinit var binding: FragmentSaveReminderBinding
+    private lateinit var generalLocation :LatLng
     private val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
     private val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 
@@ -100,82 +101,19 @@ class SaveReminderFragment : BaseFragment() {
 
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
-            if (!requestForegroundAndBackgroundLocationPermissions()) {
-                return@setOnClickListener
-            }
+
             if (longitude != null) {
                 if (latitude != null) {
-                    createGeoFence(
-                        LatLng(latitude.toDouble(), longitude.toDouble()),
+                    generalLocation= LatLng(latitude, longitude)
+                    requestForegroundAndBackgroundLocationPermissions(
+                        LatLng(latitude, longitude),
                         geofencingClient
                     )
+
                 }
             }
             scheduleJob()
-            /* if (_viewModel.geofenceIsActive()) return@setOnClickListener
-             val currentGeofenceIndex = _viewModel.nextGeofenceIndex()
-             if(currentGeofenceIndex >= GeofencingConstants.NUM_LANDMARKS) {
-                // removeGeofences()
-                 _viewModel.geofenceActivated()
-                 return@setOnClickListener
-             }
-             Log.d(TAG, "onViewCreated: $latitude and $longitude")
-             val currentGeofenceData = GeofencingConstants.LANDMARK_DATA[currentGeofenceIndex]
-             val geofence = Geofence.Builder()
-                 .setRequestId(_viewModel.selectedPOI.value?.placeId)
-                 .setCircularRegion(
-                     latitude!!,
-                     longitude!!,
-                     GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
-                 )
-                 .setExpirationDuration(GeofencingConstants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
-                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                 .build()
-             val geofencingRequest = GeofencingRequest.Builder()
-                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-                 .addGeofence(geofence)
-                 .build()
-             geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-                 addOnCompleteListener {
-                     if (context?.let { it1 ->
-                             ActivityCompat.checkSelfPermission(
-                                 it1,
-                                 Manifest.permission.ACCESS_FINE_LOCATION
-                             )
-                         } != PackageManager.PERMISSION_GRANTED
-                     ) {
-                         // TODO: Consider calling
-                         //    ActivityCompat#requestPermissions
-                         // here to request the missing permissions, and then overriding
-                         //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                         //                                          int[] grantResults)
-                         // to handle the case where the user grants the permission. See the documentation
-                         // for ActivityCompat#requestPermissions for more details.
-                         return@addOnCompleteListener
-                     }
-                     geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-                         addOnSuccessListener {
-                             Toast.makeText(
-                                 context, "Geofence Added",
-                                 Toast.LENGTH_SHORT
-                             )
-                                 .show()
 
-
-                         }
-                         addOnFailureListener {
-                             Toast.makeText(
-                                 context, "Geofence Not Addedd",
-                                 Toast.LENGTH_SHORT
-                             ).show()
-                             if ((it.message != null)) {
-
-                             }
-                         }
-                     }
-                 }
-             }*/
-//
 
             val reminder1 = ReminderDataItem(
                 _viewModel.reminderTitle.value,
@@ -186,14 +124,17 @@ class SaveReminderFragment : BaseFragment() {
             )
 
 
-            if (_viewModel.validateEnteredData(reminder1))
-            {
+            if (_viewModel.validateEnteredData(reminder1)) {
                 _viewModel.saveReminder(reminder1)
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    view?.findNavController()
+                        ?.navigate(R.id.action_saveReminderFragment_to_reminderListFragment)
 
+                }, 200)
 
 
             }
-
 
 
         }
@@ -248,6 +189,52 @@ class SaveReminderFragment : BaseFragment() {
         _viewModel.onClear()
     }
 
+    private fun deviceLocationSettingsStartGeofences(
+        resolve: Boolean = true,
+        location: LatLng,
+        geofencingClient: GeofencingClient
+    ) {
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_LOW_POWER
+        }
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        val settingsClient = LocationServices.getSettingsClient(requireContext())
+        val locationSettingsResponseTask =
+            settingsClient.checkLocationSettings(builder.build())
+        locationSettingsResponseTask.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException && resolve) {
+                try {
+                    startIntentSenderForResult(
+                        exception.resolution.intentSender,
+                        29,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null
+                    )
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
+                }
+            } else {
+                deviceLocationSettingsStartGeofences(
+                    location = location,
+                    geofencingClient = geofencingClient
+                )
+
+                // Explain user why app needs this permission
+            }
+        }
+        locationSettingsResponseTask.addOnCompleteListener {
+            if (it.isSuccessful) {
+                createGeoFence(
+                    LatLng(location.latitude.toDouble(), location.longitude.toDouble()),
+                    geofencingClient
+                )
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -277,7 +264,10 @@ class SaveReminderFragment : BaseFragment() {
                 }.show()
         } else {
 
-            // checkDeviceLocationSettingsAndStartGeofence()
+            deviceLocationSettingsStartGeofences(
+                location = generalLocation,
+                geofencingClient = geofencingClient)
+
         }
     }
 
@@ -374,9 +364,16 @@ class SaveReminderFragment : BaseFragment() {
     }
 
     @TargetApi(29)
-    private fun requestForegroundAndBackgroundLocationPermissions(): Boolean {
+    private fun requestForegroundAndBackgroundLocationPermissions(
+        location: LatLng,
+        geofencingClient: GeofencingClient
+    ): Boolean {
         var option = -1
         if (foregroundAndBackgroundLocationPermissionApproved()) {
+            deviceLocationSettingsStartGeofences(
+                location = location,
+                geofencingClient = geofencingClient
+            )
             return true
         }
 
@@ -394,28 +391,10 @@ class SaveReminderFragment : BaseFragment() {
             }
 
         }
-        if (runningQOrLater) {
-            Toast.makeText(
-                this.requireContext(),
-                "Please Allow Location for all time to enable geofencing",
-                Toast.LENGTH_SHORT
-            ).show()
-
-        } else {
-            Toast.makeText(
-                this.requireContext(),
-                "Please Allow Location Access",
-                Toast.LENGTH_SHORT
-            ).show()
-
-        }
-
-
-
         ActivityCompat.requestPermissions(
             requireActivity(),
             permissionsArray,
-            resultCode as Int
+            resultCode
         )
         return false
     }

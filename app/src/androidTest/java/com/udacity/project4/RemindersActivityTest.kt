@@ -106,6 +106,7 @@ class RemindersActivityTest :
             .check(matches(withText(R.string.err_select_location)))
         activityScenario.close()
     }
+
     @Test
     fun `TestingSavingValidSaveReminderToast`() {
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
