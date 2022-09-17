@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.FakeDataSource
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,12 +34,13 @@ class SaveReminderViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
     private lateinit var saveReminderViewModel: SaveReminderViewModel
+    private var remindersList = mutableListOf<ReminderDTO>()
 
     //TODO: provide testing to the SaveReminderView and its live data objects
 
     fun initRepository() {
         stopKoin()
-        fakeDataSource = FakeDataSource()
+        fakeDataSource = FakeDataSource(remindersList)
         saveReminderViewModel = SaveReminderViewModel(getApplicationContext(), fakeDataSource)
 
     }
