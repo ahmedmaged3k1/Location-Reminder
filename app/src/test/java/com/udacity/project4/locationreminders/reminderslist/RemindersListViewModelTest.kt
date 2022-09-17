@@ -3,29 +3,22 @@ package com.udacity.project4.locationreminders.reminderslist
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.base.CharMatcher.`is`
-import com.google.common.truth.Truth.assertThat
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.savereminder.MainCoroutineRule
-import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.pauseDispatcher
 import android.os.Build
 
-import com.udacity.project4.locationreminders.getOrAwaitValue
-
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsNot.not
 import org.hamcrest.core.Is.`is`
-import org.junit.*
 import org.koin.core.context.stopKoin
 import org.robolectric.annotation.Config
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.core.context.stopKoin
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
@@ -64,6 +57,13 @@ class RemindersListViewModelTest {
         reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
 
     }
+    fun setupFake() {
+        stopKoin()
+
+        fakeDataSource = FakeDataSource(null)
+        reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+
+    }
 
     @Test
     fun `checkLoadingLiveData`() {
@@ -80,6 +80,12 @@ class RemindersListViewModelTest {
         reminderViewModel.loadReminders()
         assertThat(reminderViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
         assertThat(reminderViewModel.remindersList.getOrAwaitValue().size, `is`(remindersList.size))
+    }
+    @Test
+    fun `testingNoRemindersData`() {
+        setupFake()
+        reminderViewModel.loadReminders()
+        assertThat(reminderViewModel.showSnackBar.getOrAwaitValue(), `is`("No Reminders Found "))
     }
 
 }
