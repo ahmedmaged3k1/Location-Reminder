@@ -2,6 +2,8 @@ package com.udacity.project4.locationreminders.data
 
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 //Use FakeDataSource that acts as a test double to the LocalDataSource
 class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : ReminderDataSource {
@@ -9,9 +11,15 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
     //    TODO: Create a fake data source to act as a double to the real data source
 
 
-    override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        remindersList?.let { return Result.Success(it) }
-        return Result.Error(
+    override suspend fun getReminders(): Result<List<ReminderDTO>> = withContext(Dispatchers.IO) {
+        try {
+
+            remindersList?.let { return@let Result.Success(it) }
+
+        } catch (ex: Exception) {
+            Result.Error(ex.localizedMessage)
+        }
+        return@withContext Result.Error(
             "No Reminders Found "
         )
     }
@@ -20,16 +28,19 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
         remindersList?.add(reminder)
     }
 
-    override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        remindersList?.forEach{
-            if (it.id==id)
-                return Result.Success(it)
+    override suspend fun getReminder(id: String): Result<ReminderDTO> =
+        withContext(Dispatchers.IO) {
+            try {
+
+
+                remindersList?.firstOrNull { it.id == id }?.let { return@let Result.Success(it) }
+            } catch (ex: Exception) {
+                Result.Error(ex.localizedMessage)
+            }
+
+            return@withContext Result.Error("Cannot Found The Reminder With Id $id")
+
         }
-            return Result.Error("Cannot Found The Reminder With Id $id")
-
-
-
-    }
 
     override suspend fun deleteAllReminders() {
         remindersList?.clear()
