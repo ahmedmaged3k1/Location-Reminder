@@ -10,11 +10,18 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
 
     //    TODO: Create a fake data source to act as a double to the real data source
 
+    private var shouldReturnError = false
+
+    fun setShouldReturnError(shouldReturn: Boolean) {
+        this.shouldReturnError = shouldReturn
+    }
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> = withContext(Dispatchers.IO) {
         try {
+            if (!shouldReturnError) {
+                remindersList?.let { return@let Result.Success(it) }
 
-            remindersList?.let { return@let Result.Success(it) }
+            }
 
         } catch (ex: Exception) {
             Result.Error(ex.localizedMessage)
@@ -31,11 +38,15 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
     override suspend fun getReminder(id: String): Result<ReminderDTO> =
         withContext(Dispatchers.IO) {
             try {
+                if (!shouldReturnError) {
+                    remindersList?.firstOrNull { it.id == id }
+                        ?.let { return@let Result.Success(it) }
 
 
-                remindersList?.firstOrNull { it.id == id }?.let { return@let Result.Success(it) }
+                }
+
             } catch (ex: Exception) {
-                Result.Error(ex.localizedMessage)
+                return@withContext Result.Error(ex.localizedMessage)
             }
 
             return@withContext Result.Error("Cannot Found The Reminder With Id $id")

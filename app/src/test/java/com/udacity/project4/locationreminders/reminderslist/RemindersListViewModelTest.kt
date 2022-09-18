@@ -14,6 +14,7 @@ import android.os.Build
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.IsNot.not
 import org.hamcrest.core.Is.`is`
+import org.junit.After
 import org.koin.core.context.stopKoin
 import org.robolectric.annotation.Config
 import org.junit.Rule
@@ -59,11 +60,11 @@ class RemindersListViewModelTest {
     }
     fun setupFake() {
         stopKoin()
-
         fakeDataSource = FakeDataSource(null)
         reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
 
     }
+
 
     @Test
     fun `checkLoadingLiveData`() {
@@ -86,6 +87,10 @@ class RemindersListViewModelTest {
         setupFake()
         reminderViewModel.loadReminders()
         assertThat(reminderViewModel.showSnackBar.getOrAwaitValue(), `is`("No Reminders Found "))
+    }
+    @After
+    fun stopDown() {
+        stopKoin()
     }
 
 }
