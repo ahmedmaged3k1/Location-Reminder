@@ -112,7 +112,6 @@ class SaveReminderFragment : BaseFragment() {
 
                 }
             }
-            scheduleJob()
 
 
             val reminder1 = ReminderDataItem(
@@ -140,6 +139,7 @@ class SaveReminderFragment : BaseFragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
         val geofence = Geofence.Builder()
             .setRequestId(GEOFENCE_ID)
@@ -177,9 +177,13 @@ class SaveReminderFragment : BaseFragment() {
                 )
             } else {
                 geofencingClient.addGeofences(geofenceRequest, pendingIntent)
+                scheduleJob()
+
             }
         } else {
             geofencingClient.addGeofences(geofenceRequest, pendingIntent)
+            scheduleJob()
+
         }
     }
 
