@@ -66,9 +66,9 @@ class SaveReminderFragment : BaseFragment() {
     private val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
     private val geofencePendingIntent: PendingIntent by lazy {
 
-        val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
+        val intent = Intent(activity, GeofenceBroadcastReceiver::class.java)
         intent.action="EVENT.ACTION_GEOFENCE"
-        PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
 
@@ -78,9 +78,10 @@ class SaveReminderFragment : BaseFragment() {
     ): View? {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
-        setDisplayHomeAsUpEnabled(true)
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
-        createChannel(requireContext())
+
+        setDisplayHomeAsUpEnabled(true)
+
         binding.viewModel = _viewModel
 
         return binding.root
@@ -149,9 +150,9 @@ class SaveReminderFragment : BaseFragment() {
         val geofence = Geofence.Builder()
             .setRequestId(GEOFENCE_ID)
             .setCircularRegion(location.latitude, location.longitude, GEOFENCE_RADIUS.toFloat())
-            .setExpirationDuration(GEOFENCE_EXPIRATION.toLong())
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_DWELL)
-            .setLoiteringDelay(GEOFENCE_DWELL_DELAY)
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER )
+
             .build()
 
         val geofenceRequest = GeofencingRequest.Builder()
@@ -167,10 +168,10 @@ class SaveReminderFragment : BaseFragment() {
             requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        geofencingClient.addGeofences(geofenceRequest, pendingIntent)
+        geofencingClient.addGeofences(geofenceRequest, geofencePendingIntent)
             .addOnSuccessListener {
                 _viewModel.validateAndSaveReminder(reminder1)
-                scheduleJob()
+               // scheduleJob()
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed({
                     Toast.makeText(
@@ -266,7 +267,7 @@ class SaveReminderFragment : BaseFragment() {
         ) {
 
             Snackbar.make(
-                binding.root.findViewById(R.id.mapsLayout),
+                binding.root,
                 R.string.permission_denied_explanation,
                 Snackbar.LENGTH_INDEFINITE
             )
