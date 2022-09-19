@@ -28,6 +28,11 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
                 remindersList?.let { return@let Result.Success(it) }
 
             }
+            else{
+                return@withContext Result.Error(
+                    "No Reminders Found In DataSource "
+                )
+            }
         }
         catch (ex : Exception){
             return@withContext   Result.Error(ex.localizedMessage)
@@ -49,6 +54,10 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
                 {
                     remindersList?.firstOrNull { it.id == id }?.let { return@let Result.Success(it) }
 
+
+                }
+                else{
+                    return@withContext Result.Error("Cannot Found The Reminder With Id $id")
 
                 }
             }
