@@ -53,8 +53,9 @@ class RemindersListViewModelTest {
         remindersList.add(testReminder)
         remindersList.add(testReminder2)
         remindersList.add(testReminder3)
-
         fakeDataSource = FakeDataSource(remindersList)
+
+
         reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
 
     }
@@ -70,11 +71,23 @@ class RemindersListViewModelTest {
     @Test
     fun `checkLoadingLiveData`() {
         setup()
-
         mainCoroutineRule.pauseDispatcher()
         reminderViewModel.loadReminders()
         assertThat(reminderViewModel.showLoading.getOrAwaitValue(), `is`(true))
     }
+    @Test
+    fun `gettingReminders`() {
+        setup()
+        mainCoroutineRule.pauseDispatcher()
+        reminderViewModel.loadReminders()
+        reminderViewModel.remindersList.value=remindersList as List<ReminderDataItem>
+
+        assertThat(reminderViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
+        assertThat(reminderViewModel.remindersList.getOrAwaitValue().size, `is`(remindersList.size))
+
+    }
+
+
 
 
     @Test
