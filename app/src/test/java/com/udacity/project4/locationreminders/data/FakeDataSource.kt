@@ -16,16 +16,9 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
         this.shouldReturnError = shouldReturn
     }
 
+
     override suspend fun getReminders(): Result<List<ReminderDTO>> = withContext(Dispatchers.IO) {
-        try {
-            if (!shouldReturnError) {
-                remindersList?.let { return@let Result.Success(it) }
-
-            }
-
-        } catch (ex: Exception) {
-            Result.Error(ex.localizedMessage)
-        }
+        remindersList?.let { return@let Result.Success(it) }
         return@withContext Result.Error(
             "No Reminders Found "
         )
@@ -37,18 +30,7 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> =
         withContext(Dispatchers.IO) {
-            try {
-                if (!shouldReturnError) {
-                    remindersList?.firstOrNull { it.id == id }
-                        ?.let { return@let Result.Success(it) }
-
-
-                }
-
-            } catch (ex: Exception) {
-                return@withContext Result.Error(ex.localizedMessage)
-            }
-
+            remindersList?.firstOrNull { it.id == id }?.let { return@let Result.Success(it) }
             return@withContext Result.Error("Cannot Found The Reminder With Id $id")
 
         }

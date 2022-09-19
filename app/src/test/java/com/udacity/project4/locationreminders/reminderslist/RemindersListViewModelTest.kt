@@ -61,6 +61,7 @@ class RemindersListViewModelTest {
     fun setupFake() {
         stopKoin()
         fakeDataSource = FakeDataSource(null)
+        fakeDataSource.setShouldReturnError(true)
         reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
 
     }
@@ -75,13 +76,7 @@ class RemindersListViewModelTest {
         assertThat(reminderViewModel.showLoading.getOrAwaitValue(), `is`(true))
     }
 
-    @Test
-    fun `checkRemindersTest`(){
-        setup()
-        reminderViewModel.loadReminders()
-        assertThat(reminderViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
-        assertThat(reminderViewModel.remindersList.getOrAwaitValue().size, `is`(remindersList.size))
-    }
+
     @Test
     fun `testingNoRemindersData`() {
         setupFake()
