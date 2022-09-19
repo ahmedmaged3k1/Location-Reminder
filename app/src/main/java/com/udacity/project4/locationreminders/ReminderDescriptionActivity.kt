@@ -3,9 +3,14 @@ package com.udacity.project4.locationreminders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.LocationServices
 import com.udacity.project4.R
 import com.udacity.project4.databinding.ActivityReminderDescriptionBinding
 import com.udacity.project4.locationreminders.data.local.LocalDB
@@ -29,19 +34,38 @@ class ReminderDescriptionActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityReminderDescriptionBinding
+    private lateinit var geofencingClient: GeofencingClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.activity_reminder_description
         )
+
 //        TODO: Add the implementation of the reminder details
+        geofencingClient = LocationServices.getGeofencingClient(this)
+        var reminderItem = intent.getSerializableExtra(EXTRA_ReminderDataItem) as ReminderDataItem
+        var detaails =  binding.root.findViewById<TextView>(R.id.reminderDetails)
+        detaails.text=reminderItem.description
+        removeGeofences(applicationContext,reminderItem.id)
         var localDb = LocalDB.createRemindersDao(applicationContext )
         runBlocking {
             val last = localDb.getReminders().last()
-          var detaails =  binding.root.findViewById<TextView>(R.id.reminderDetails)
-            detaails.text=last.description
-
         }
     }
+    fun removeGeofences(context: Context,geofenceId: String) {
+
+        geofencingClient.removeGeofences(listOf(geofenceId)).run {
+            addOnSuccessListener { //in case of success removing
+                Log.d("TAG", "Geofence  removed successfully ")
+
+            }
+            addOnFailureListener { ////in case of failure
+
+                Log.d("TAG", "Geofence Cannot Be removed")
+            }
+        }
+
+    }
+
 }
