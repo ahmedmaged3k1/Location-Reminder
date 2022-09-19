@@ -148,7 +148,7 @@ class SaveReminderFragment : BaseFragment() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
         val geofence = Geofence.Builder()
-            .setRequestId(GEOFENCE_ID)
+            .setRequestId(reminder1.id)
             .setCircularRegion(location.latitude, location.longitude, GEOFENCE_RADIUS.toFloat())
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER )
@@ -418,7 +418,7 @@ class SaveReminderFragment : BaseFragment() {
 }
 
 
-const val GEOFENCE_RADIUS = 200
+const val GEOFENCE_RADIUS = 900
 const val GEOFENCE_ID = "REMINDER_GEOFENCE_ID"
 const val GEOFENCE_EXPIRATION = 10 * 24 * 60 * 60 * 1000 // 10 days
 const val GEOFENCE_DWELL_DELAY = 10 * 1000 // 10 secs // 2 minutes
