@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -9,17 +10,15 @@ import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.savereminder.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.pauseDispatcher
-import android.os.Build
-
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.IsNot.not
 import org.hamcrest.core.Is.`is`
+import org.hamcrest.core.IsNot.not
 import org.junit.After
-import org.koin.core.context.stopKoin
-import org.robolectric.annotation.Config
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.context.stopKoin
+import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
@@ -56,14 +55,17 @@ class RemindersListViewModelTest {
         fakeDataSource = FakeDataSource(remindersList)
 
 
-        reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+        reminderViewModel =
+            RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
 
     }
+
     fun setupFake() {
         stopKoin()
         fakeDataSource = FakeDataSource(null)
         fakeDataSource.setShouldReturnError(true)
-        reminderViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+        reminderViewModel =
+            RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
 
     }
 
@@ -75,12 +77,13 @@ class RemindersListViewModelTest {
         reminderViewModel.loadReminders()
         assertThat(reminderViewModel.showLoading.getOrAwaitValue(), `is`(true))
     }
+
     @Test
     fun `gettingReminders`() {
         setup()
         mainCoroutineRule.pauseDispatcher()
         reminderViewModel.loadReminders()
-        reminderViewModel.remindersList.value=remindersList as List<ReminderDataItem>
+        reminderViewModel.remindersList.value = remindersList as List<ReminderDataItem>
 
         assertThat(reminderViewModel.remindersList.getOrAwaitValue(), (not(emptyList())))
         assertThat(reminderViewModel.remindersList.getOrAwaitValue().size, `is`(remindersList.size))
@@ -88,14 +91,16 @@ class RemindersListViewModelTest {
     }
 
 
-
-
     @Test
     fun `testingNoRemindersData`() {
         setupFake()
         reminderViewModel.loadReminders()
-        assertThat(reminderViewModel.showSnackBar.getOrAwaitValue(), `is`("No Reminders Found In DataSource "))
+        assertThat(
+            reminderViewModel.showSnackBar.getOrAwaitValue(),
+            `is`("No Reminders Found In DataSource ")
+        )
     }
+
     @After
     fun stopDown() {
         stopKoin()
