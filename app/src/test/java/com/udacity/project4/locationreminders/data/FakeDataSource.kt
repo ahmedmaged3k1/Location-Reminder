@@ -21,6 +21,10 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
         try {
             if (!shouldReturnError)
             {
+                if(remindersList?.isEmpty()==true)
+                {
+                    return@withContext Result.Success(emptyList<ReminderDTO>())
+                }
                 remindersList?.let { return@let Result.Success(it) }
 
             }
