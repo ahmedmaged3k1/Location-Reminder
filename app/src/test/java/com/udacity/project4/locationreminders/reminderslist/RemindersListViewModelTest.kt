@@ -94,7 +94,7 @@ class RemindersListViewModelTest {
     fun `testingNoRemindersData`() {
         setupFake()
         reminderViewModel.loadReminders()
-        assertThat(reminderViewModel.showSnackBar.getOrAwaitValue(), `is`("No Reminders Found "))
+        assertThat(reminderViewModel.showSnackBar.getOrAwaitValue(), `is`("No Reminders Found In DataSource "))
     }
     @After
     fun stopDown() {
