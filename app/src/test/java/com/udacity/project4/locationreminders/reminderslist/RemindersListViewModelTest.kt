@@ -92,12 +92,37 @@ class RemindersListViewModelTest {
 
 
     @Test
-    fun `testingNoRemindersData`() {
+    fun `testingNoRemindersDataWithShouldReturnError`() {
         setupFake()
         reminderViewModel.loadReminders()
+
+        assertThat(
+            reminderViewModel.showSnackBar.getOrAwaitValue(),
+            `is`("Exception error ")
+        )
+    }
+    @Test
+    fun `testingNoRemindersData`() {
+        fakeDataSource = FakeDataSource(remindersList)
+        reminderViewModel =
+            RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeDataSource)
+        reminderViewModel.loadReminders()
+        reminderViewModel.remindersList.value = remindersList as List<ReminderDataItem>
+
         assertThat(
             reminderViewModel.showSnackBar.getOrAwaitValue(),
             `is`("No Reminders Found In DataSource ")
+        )
+    }
+    @Test
+    fun `testingRemindersDataFound`() {
+        setup()
+        reminderViewModel.loadReminders()
+        reminderViewModel.remindersList.value = remindersList as List<ReminderDataItem>
+
+        assertThat(
+            reminderViewModel.remindersList!!.value!!.size,
+            `is`(not(emptyList<ReminderDTO>()))
         )
     }
 

@@ -4,6 +4,7 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 //Use FakeDataSource that acts as a test double to the LocalDataSource
 class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : ReminderDataSource {
@@ -17,13 +18,11 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
     }
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        if (remindersList?.isEmpty() == true) {
-            return Result.Success(emptyList<ReminderDTO>())
+        if (shouldReturnError) {
+            return Result.Error("Exception error ")
         }
-        remindersList?.let { return Result.Success(it) }
-        return Result.Error(
-            "No Reminders Found In DataSource "
-        )
+        remindersList?.let { return@let Result.Success(it.toList()) }
+        return Result.Error("No Reminders Found In DataSource ")
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
@@ -31,8 +30,11 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
+        if (shouldReturnError) {
+            return Result.Error("Exception error ")
+        }
         remindersList?.firstOrNull { it.id == id }?.let { return Result.Success(it) }
-        return Result.Error("No Reminders Found In DataSource ")
+        return Result.Error("Cannot Found The Reminder With Id $id")
     }
 
     override suspend fun deleteAllReminders() {
