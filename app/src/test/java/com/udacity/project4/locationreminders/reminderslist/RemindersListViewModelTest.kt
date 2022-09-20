@@ -110,8 +110,8 @@ class RemindersListViewModelTest {
         reminderViewModel.remindersList.value = remindersList as List<ReminderDataItem>
 
         assertThat(
-            reminderViewModel.showSnackBar.getOrAwaitValue(),
-            `is`("No Reminders Found In DataSource ")
+            reminderViewModel.remindersList.getOrAwaitValue(),
+            `is`(emptyList<ReminderDTO>())
         )
     }
     @Test

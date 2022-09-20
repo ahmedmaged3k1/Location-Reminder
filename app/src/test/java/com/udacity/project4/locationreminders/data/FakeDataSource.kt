@@ -22,7 +22,7 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
             return Result.Error("Exception error ")
         }
         remindersList?.let { return@let Result.Success(it.toList()) }
-        return Result.Error("No Reminders Found In DataSource ")
+        return Result.Success(emptyList<ReminderDTO>())
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {
