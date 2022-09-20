@@ -17,6 +17,9 @@ class FakeDataSource(private var remindersList: MutableList<ReminderDTO>?) : Rem
     }
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
+        if (remindersList?.isEmpty() == true) {
+            return Result.Success(emptyList<ReminderDTO>())
+        }
         remindersList?.let { return Result.Success(it) }
         return Result.Error(
             "No Reminders Found In DataSource "
